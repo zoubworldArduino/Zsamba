@@ -22,6 +22,7 @@
 #include "sam_ba_uart.h"
 #include "sam_ba_wire.h"
 #include "sam_ba_cdc.h"
+#include "spi.h"
 
 const char RomBOOT_Version[] = SAM_BA_VERSION;
 #if (defined ARDUINO_EXTENDED_CAPABILITIES) && (ARDUINO_EXTENDED_CAPABILITIES == 1)
@@ -222,7 +223,7 @@ void call_applet(uint32_t address)
 }
 
 uint32_t current_number;
-uint32_t i, length;
+uint32_t  length;
 uint8_t command, *ptr_data, *ptr, data[SIZEBUFMAX];
 uint8_t j;
 uint32_t u32tmp;
@@ -249,7 +250,7 @@ static void sam_ba_monitor_loop(void)
 {
   length = sam_ba_getdata(ptr_monitor_if, data, SIZEBUFMAX);
   ptr = data;
-
+  int i;
   for (i = 0; i < length; i++, ptr++)
   {
     if (*ptr == 0xff) continue;
@@ -337,6 +338,91 @@ static void sam_ba_monitor_loop(void)
         }
       }
       #if defined(TERMINAL_MODE_ENABLED)
+      /*
+      gateway
+      */
+      else if (command == 'g')
+      {
+        b_terminal_mode = 1;
+ // start a gateway from current interface to the one specified
+        // It's useful to quickly check if a transfer has been done
+        // successfully.
+
+        // Syntax: g[0xmmssaabb]#
+        // Returns: g#
+        // aa: type of com : wire0  usart1 usart2 SPI4 ....
+        // bb :index of feature( PCOM index )
+        // ss : slave address in wire
+        // mm : master address
+        uint32_t start_addr = (uint32_t)ptr_data;
+        uint32_t oXaabb = current_number;
+
+
+        // Send response
+        sam_ba_putdata( ptr_monitor_if, "g", 1);
+        sam_ba_putdata(ptr_monitor_if, "#\n\r", 2);
+        while(1)
+        {
+          switch((oXaabb>>8) &0xFF)
+          {
+            case 0:
+              P_COM[oXaabb &0xFF].wire.begin(((oXaabb>>24) &0xFF)); 
+              // join i2c bus with address #
+  
+              while(1)
+              {
+              if (P_COM[oXaabb &0xFF].wire.available())
+                ptr_monitor_if->put_c(P_COM[oXaabb &0xFF].wire.read());
+              if( ptr_monitor_if->is_rx_ready())
+              {
+                
+                P_COM[oXaabb &0xFF].wire.beginTransmission(((oXaabb>>16) &0xFF)); // transmit to device #4
+                P_COM[oXaabb &0xFF].wire.write(ptr_monitor_if->get_c());
+                P_COM[oXaabb &0xFF].wire.endTransmission();    // stop transmitting
+            }
+              }
+            break;
+            
+            case 1:
+                P_COM[oXaabb &0xFF].serial.begin(115200);
+              while(1)
+              {
+                if (P_COM[oXaabb &0xFF].serial.available())
+                  ptr_monitor_if->put_c(P_COM[oXaabb &0xFF].serial.read());
+                if( ptr_monitor_if->is_rx_ready())
+                  P_COM[oXaabb &0xFF].serial.write(ptr_monitor_if->get_c());
+              }
+            break;
+            
+            case 2:
+                P_COM[oXaabb &0xFF].serial2.begin(115200);
+              while(1)
+              {
+              if (P_COM[oXaabb &0xFF].serial2.available())
+                ptr_monitor_if->put_c(P_COM[oXaabb &0xFF].serial2.read());
+              if( ptr_monitor_if->is_rx_ready())
+                P_COM[oXaabb &0xFF].serial2.write(ptr_monitor_if->get_c());
+              }
+            break;
+            
+            case 3:
+              P_COM[oXaabb &0xFF].spi.begin();
+              while(1)
+              {/*
+              if (P_COM[oXaabb & 0xFF].spi.transfer())
+                ptr_monitor_if->put_c(P_COM[oXaabb &0xFF].spi.read());*/
+              if( ptr_monitor_if->is_rx_ready())
+                ptr_monitor_if->put_c(P_COM[oXaabb & 0xFF].spi.transfer(ptr_monitor_if->get_c()));
+              
+              }
+            break;
+            
+          
+            
+          }
+        }
+      }
+      
       else if (command == 'T')
       {
         b_terminal_mode = 1;

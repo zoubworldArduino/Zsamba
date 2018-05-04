@@ -4,6 +4,28 @@
 #include "sam_ba_wire.h"
 #include "sam_ba_cdc.h"
 
+
+
+
+
+
+
+ #ifdef ARDUINO_AVR_UNO
+#define WireBoot Wire
+#define SerialBoot SerialFTDI
+
+ #elif defined(BOARD_ID_Pilo)
+#define WireBoot P_COM0_BIS.wire
+#define SerialBoot P_COM3.serial2
+//#define SerialBoot SerialFTDI
+
+#elif defined(BOARD_ID_Captor)
+
+#define WireBoot P_COM0.wire
+#define SerialBoot SerialFTDI
+
+#endif
+
 /*extern volatile int8_t ledDirection;
 extern void board_init(void);
 */
@@ -171,8 +193,8 @@ void setup() {
 
   /* Start the sys tick (20 us) */
   SysTick_Config(VARIANT_MCK / 50000);
-wire_setup(Wire, 0x41,BOSSAC_ADDRESS);
-uart_setup(SerialFTDI);
+wire_setup(WireBoot, BOSSAC_ADDRESS,BOSSAC_ADDRESS);
+uart_setup(SerialBoot);
 
 
 /* If SDCARD_ENABLED defined, read optional external pins and run SD Card bootloader (if enabled).
@@ -289,7 +311,7 @@ uart_setup(SerialFTDI);
 #if SAM_BA_INTERFACE == SAM_BA_WIRE_ONLY  ||  SAM_BA_INTERFACE == SAM_BA_BOTH_INTERFACES
   /* UART is enabled in all cases */
   LED_setSpeed(240);
-  wire_open(115200);  
+  wire_open(10000);  
   LED_setSpeed(120);  
 #endif
 

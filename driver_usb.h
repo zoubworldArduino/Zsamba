@@ -19,7 +19,7 @@
 
 #ifndef _BOARD_DRIVER_USB_H_
 #define _BOARD_DRIVER_USB_H_
-
+#if defined(USBCON)
 #include "sam_ba_cdc.h"
 #include "util.h"
 
@@ -42,5 +42,5 @@ void USB_SendZlp(Usb *pUsb);
 
 void USB_SetAddress(Usb *pUsb, uint16_t wValue);
 void USB_Configure(Usb *pUsb);
-
+#endif
 #endif // _BOARD_DRIVER_USB_H_

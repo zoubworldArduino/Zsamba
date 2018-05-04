@@ -78,14 +78,15 @@ wire=&Mywire;
  */
 void wire_open(unsigned int fBaudSpeed)
 {
+        wire->begin();
 	wire->begin(address);
 	wire->setClock(fBaudSpeed);
 	
-	/*wire_putc('B');
+	wire_putc('B');
 	wire_putc('O');
 	wire_putc('O');
 	wire_putc('T');
-	error_timeout = 0;*/
+	error_timeout = 0;
 }
 
 /**
@@ -108,8 +109,7 @@ int wire_putc(int value)
 {	
 
  wire->beginTransmission(address_Bossac); // transmit to device #8
-  wire->write("x is ");        // sends five bytes
-  wire->write((uint8_t)value);              // sends one byte
+  wire->write((char)value);              // sends one byte
   wire->endTransmission();    // stop transmitting
   
 	//wire->write( (uint8_t)value);

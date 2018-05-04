@@ -16,7 +16,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
+#if defined(USBCON)
 #include <string.h>
 #include "driver_usb.h"
 #include "sam_ba_usb.h"
@@ -370,3 +370,4 @@ void USB_Configure(Usb *pUsb)
   usb_endpoint_table[USB_EP_COMM].DeviceDescBank[1].PCKSIZE.bit.SIZE = 0;
   pUsb->DEVICE.DeviceEndpoint[USB_EP_COMM].EPSTATUSCLR.reg = USB_DEVICE_EPSTATUSCLR_BK1RDY;
 }
+#endif

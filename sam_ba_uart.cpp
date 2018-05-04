@@ -72,7 +72,7 @@ uint8_t uart_mode_of_transfer;
 void uart_open(unsigned int fBaudSpeed)
 {
 	serial->begin(fBaudSpeed);
-	uart_getc();//wait until 1st exchange
+	//uart_getc();//wait until 1st exchange
 	uart_putc('B');
 	uart_putc('O');
 	uart_putc('O');

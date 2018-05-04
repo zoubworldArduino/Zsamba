@@ -37,7 +37,7 @@
 #define CRC16POLY                (0x1021)
 
 #define SHARP_CHARACTER          '#' /* 0x23 : 35*/
-#define BOSSAC_ADDRESS          0x23
+#define BOSSAC_ADDRESS          0x23// '#' :35
 void wire_setup(TwoWire &Mywire, unsigned int Myaddress,unsigned int Myaddress_Bossac);
 
 /* X/Ymodem protocol: */
