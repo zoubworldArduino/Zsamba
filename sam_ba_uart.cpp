@@ -35,8 +35,8 @@ t_monitor_if uart_if =
   .getdata_xmd = uart_getdata_xmd
 };
 #endif
-Uart * serial;
-void uart_setup(Uart &Myserial)
+HardwareSerial * serial;
+void uart_setup(HardwareSerial &Myserial)
 {
   serial=&Myserial;
 }

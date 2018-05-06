@@ -25,7 +25,7 @@
 
 #include "Arduino.h"
 
-void uart_setup(Uart &Myserial);
+void uart_setup(HardwareSerial &Myserial);
 
 /* USART buffer size (must be a power of two) */
 #define USART_BUFFER_SIZE        (128)
