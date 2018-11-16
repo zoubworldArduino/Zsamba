@@ -224,7 +224,7 @@ void call_applet(uint32_t address)
 
 uint32_t current_number;
 uint32_t  length;
-uint8_t command, *ptr_data, *ptr, data[SIZEBUFMAX];
+uint8_t command, *ptr_data, *ptr, datasamba[SIZEBUFMAX];
 uint8_t j;
 uint32_t u32tmp;
 
@@ -248,8 +248,8 @@ static void put_uint32(uint32_t n)
 
 static void sam_ba_monitor_loop(void)
 {
-  length = sam_ba_getdata(ptr_monitor_if, data, SIZEBUFMAX);
-  ptr = data;
+  length = sam_ba_getdata(ptr_monitor_if, datasamba, SIZEBUFMAX);
+  ptr = datasamba;
   int i;
   for (i = 0; i < length; i++, ptr++)
   {
